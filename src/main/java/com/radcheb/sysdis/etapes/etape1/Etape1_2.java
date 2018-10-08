@@ -1,15 +1,15 @@
-package com.radcheb.sysdis.etapes;
+package com.radcheb.sysdis.etapes.etape1;
 
 
 import org.apache.log4j.Logger;
 
 import java.util.*;
 
-import static com.radcheb.sysdis.etapes.Etape1.countWords;
+import static com.radcheb.sysdis.etapes.etape1.Etape1_1.countWords;
 
-public class Etape2 {
+public class Etape1_2 {
 
-    private final static Logger logger = Logger.getLogger(Etape2.class);
+    private final static Logger logger = Logger.getLogger(Etape1_2.class);
 
     public static void main(String[] args) {
 

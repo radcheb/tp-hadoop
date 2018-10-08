@@ -1,4 +1,4 @@
-package com.radcheb.sysdis.etapes;
+package com.radcheb.sysdis.etapes.etape1;
 
 
 import org.apache.log4j.Logger;
@@ -10,9 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
-public class Etape1 {
+public class Etape1_1 {
 
-    private final static Logger logger = Logger.getLogger(Etape1.class);
+    private final static Logger logger = Logger.getLogger(Etape1_1.class);
 
     public static void main(String[] args) {
 
