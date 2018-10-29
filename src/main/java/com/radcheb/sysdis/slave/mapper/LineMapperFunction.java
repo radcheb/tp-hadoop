@@ -1,4 +1,4 @@
-package com.radcheb.sysdis.slave;
+package com.radcheb.sysdis.slave.mapper;
 
 import com.radcheb.sysdis.utils.Pair;
 

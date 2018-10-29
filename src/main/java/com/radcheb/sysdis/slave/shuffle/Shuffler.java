@@ -4,69 +4,39 @@ import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
-public class GlobalShuffler {
+public class Shuffler {
 
-    private final static Logger logger = Logger.getLogger(GlobalShuffler.class);
+    private final static Logger logger = Logger.getLogger(Shuffler.class);
 
     public static void main(String[] args) throws IOException {
-        if (args.length < 2) {
-            logger.error("Usage: Shuffler <key> <output SM files> <output SMs dir>");
+        if (args.length < 3) {
+            logger.error("Usage: Shuffler <key> <output SM file> <output UM files>");
             System.exit(1);
         }
+        String key = args[0];
+        String[] umPaths = Arrays.copyOfRange(args, 2, args.length);
 
-        ConcurrentHashMap<String, BufferedWriter> keysWriters = new ConcurrentHashMap<>();
-        AtomicLong idsGen = new AtomicLong(0);
-        File UMsDir = new File(args[0]);
-        String SMsDir = args[1];
-
-        File[] UMs = UMsDir.listFiles((dir, name) -> name.startsWith("UM"));
-
-        Arrays.stream(Objects.requireNonNull(UMs)).parallel().forEach(um -> {
-                    logger.info("processing um: " + um.getName());
-                    String SMSplitPathTemp = String.format("%s/SM", SMsDir);
-                    try (BufferedReader reader = Files.newBufferedReader(um.toPath())) {
-                        reader.lines().forEach(l -> {
-                            String key = l.split(" ")[0];
-
-                            keysWriters.computeIfAbsent(key, s -> {
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(args[1]))) {
+            Arrays.stream(umPaths).parallel().forEach(um -> {
+                        logger.info("processing um: " + um);
+                        try (BufferedReader reader = Files.newBufferedReader(Paths.get(um))) {
+                            reader.lines().filter(l -> l.split(" ")[0].equals(key)).forEach(l -> {
                                 try {
-                                    String smPath = SMSplitPathTemp + idsGen.incrementAndGet();
-                                    return Files.newBufferedWriter(Paths.get(
-                                            smPath
-                                    ));
+                                    writer.write(l + System.lineSeparator());
                                 } catch (IOException e) {
-                                    logger.error("Failed to open SM file for writing");
-                                    return null;
+                                    logger.error("Failed to write to sm, {}", e);
                                 }
                             });
-
-                            try {
-                                keysWriters.get(key).write(l + System.lineSeparator());
-                            } catch (IOException e) {
-                                logger.error("Failed to write line: " + l + ", {}", e);
-                            }
-                        });
-                    } catch (IOException e) {
-                        logger.error("Failed open um: " + um + ", {}", e);
+                        } catch (IOException e) {
+                            logger.error("Failed open um: " + um + ", {}", e);
+                        }
                     }
-                }
-        );
-
-        keysWriters.values().forEach(w -> {
-            try {
-                w.close();
-            } catch (IOException e) {
-                logger.error("Failed to close writer {}", e);
-            }
-        });
+            );
+        }
     }
 }

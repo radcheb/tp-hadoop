@@ -19,7 +19,7 @@ public class GlobalShuffler {
 
     public static void main(String[] args) throws IOException {
         if (args.length < 2) {
-            logger.error("Usage: Shuffler <key> <output SM files> <output SMs dir>");
+            logger.error("Usage: Shuffler <output UM dir> <output SM dir>");
             System.exit(1);
         }
 

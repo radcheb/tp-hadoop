@@ -1,0 +1,5 @@
+ssh.username=your_username
+splits.dir=splits
+splits.template=/S%d.txt
+splits.nbr=6
+jar.path=tp-hadoop-1.0-SNAPSHOT-shaded.jar
